@@ -7,7 +7,7 @@ class LinearLayer:
 
     Attributes:
         W (torch.Tensor): Weight matrix with shape (output_dim, input_dim).
-        b (torch.Tensor): Bias vector with shape (output_dim, 1).
+        b (torch.Tensor): Bias vector with shape (1, output_dim).
         X (torch.Tensor): Cached input used during the forward pass.
         dW (torch.Tensor): Gradient with respect to the weights.
         db (torch.Tensor): Gradient with respect to the biases.
@@ -30,17 +30,17 @@ class LinearLayer:
         self.device = device
 
         self.W = torch.randn(output_dim, input_dim, device=self.device) * math.sqrt(2.0 / input_dim)
-        self.b = torch.randn(1, output_dim,, device=self.device) * math.sqrt(2.0 / input_dim)
+        self.b = torch.randn(1, output_dim, device=self.device) * math.sqrt(2.0 / input_dim) if bias else None
 
     def forward(self, X):
         """
         Compute the forward pass of the linear layer.
 
         Args:
-            X (torch.Tensor): Input data with shape (input_dim, m) where m is the number of examples.
+            X (torch.Tensor): Input data with shape (batch_size, sequence_length, input_dim).
 
         Returns:
-            Z (torch.Tensor): Linear output with shape (output_dim, m)
+            Z (torch.Tensor): Linear output with shape (batch_size, sequence_length, output_dim)
 
         Notes:
             The input X is stored for use during backpropagation.
@@ -49,11 +49,11 @@ class LinearLayer:
         # Store the input and calculate the output of the linear layer
         self.X = X
 
-        Z = X @ self.W
+        Z = X @ self.W.T
+        if self.b is not None:
+            Z = Z + self.b
 
-        return Z += self.b
-
-
+        return Z
 
     def backward(self, dY):
         """
@@ -79,13 +79,13 @@ class LinearLayer:
 
         # dW shape: (output_dim, input_dim)
         self.dW = dY_flat.T @ X_flat
-        self.db = dY.sum(dim=(0, 1))
 
-        dX = dY @ self.W
+        if self.b is not None:
+            self.db = dY.sum(dim=(0, 1))  # (Out,)
+
+        dX = dY @ self.W  # (B, T, In) because (B,T,Out) @ (Out,In)
 
         return dX
-
-
 
     def update(self, lr):
         """
@@ -100,4 +100,5 @@ class LinearLayer:
 
         # Update the weights and biases of the layer using the learning rate
         self.W -= lr * self.dW
-        self.b -= lr * self.db
+        if self.b is not None:
+            self.b -= lr * self.db

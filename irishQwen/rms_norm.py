@@ -27,8 +27,7 @@ class RMSNorm:
         self.gamma = torch.ones(self.model_dim, device=self.device)
 
     def forward(self, X):
-        # y = gamma * x / sqrt(mean(x^2) + eps)
-        rms = torch.sqrt((X * X).mean(dim=-1, keepdim=True) + self.eps)
+        rms   = torch.sqrt((X * X).mean(dim=-1, keepdim=True) + self.eps)
         X_hat = X / rms
 
         # Cache for backward
@@ -37,6 +36,18 @@ class RMSNorm:
         return self.gamma * X_hat
 
     def backward(self, dY):
+        D = self.model_dim
+        cache = self.cache
+
+        dX_hat      = dY * self.gamma
+        self.dgamma = (dY * cache.x_hat).reshape(-1, D).sum(dim=0)    # (D,)
+
+        # Same trick as LayerNorm backward, minus the mean-subtraction term
+        dX = (1.0 / cache.rms) * (
+            dX_hat
+            - cache.x_hat * (dX_hat * cache.x_hat).mean(dim=-1, keepdim=True)
+        )
+
         return dX
 
     def update(self, lr):
