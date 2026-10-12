@@ -18,6 +18,12 @@ pip install -r requirements.txt
 
 The model selects CUDA, Apple MPS, or CPU according to availability.
 
+## Train in Colab (no local installation)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wtheisen/irishQwen/blob/master/Train_IrishQwen.ipynb)
+
+Open the notebook, select a T4 GPU runtime, and enter your GitHub username. It clones your public fork, installs dependencies, and runs your implementation. Commit and push your completed exercises first. Start with one epoch; the notebook also lets you download the trained checkpoint.
+
 ## Train on Shakespeare
 
 The teaching corpus and its vocabulary are included in `Datasets/`:
