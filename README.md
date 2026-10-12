@@ -22,7 +22,7 @@ The model selects CUDA, Apple MPS, or CPU according to availability.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wtheisen/irishQwen/blob/master/Train_IrishQwen.ipynb)
 
-Open the notebook, select a T4 GPU runtime, and enter your GitHub username. It clones your public fork, installs dependencies, and runs your implementation. Commit and push your completed exercises first. Start with one epoch; the notebook also lets you download the trained checkpoint.
+Open the notebook, select a T4 GPU runtime, and enter your GitHub username. It clones your public fork, installs dependencies, and runs your implementation. Commit and push your completed exercises first. Training defaults to five epochs; use one epoch for a quick check. The notebook also lets you download the trained checkpoint.
 
 ## Train on Shakespeare
 

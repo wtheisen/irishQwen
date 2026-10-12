@@ -65,7 +65,7 @@ if __name__ == "__main__":
     parser.add_argument("--n_kv_heads", type=int, default=4)
     parser.add_argument("--ffn_dim", type=int, default=768)
     parser.add_argument("--batch_size", type=int, default=32)
-    parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--learning_rate", type=float, default=3e-3)
     parser.add_argument("--optimizer", choices=["sgd", "momentum", "adam", "adamw"], default="adam")
     parser.add_argument("--weight_decay", type=float, default=0.1, help="AdamW only")
