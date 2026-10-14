@@ -22,7 +22,15 @@ class SwiGLU:
         pass
 
     def backward(self, dY):
-        pass
+        dH = self.down.backward(dY)                          # (B, T, F)
+
+        # Elementwise gate:  H = g * u
+        dg = dH * self.u
+        du = dH * self.g
+
+        # X fed both branches, so its gradient is the sum of both
+        dX = self.gate.backward(self.act.backward(dg)) + self.up.backward(du)
+        return dX
 
     def update(self, lr):
         pass
