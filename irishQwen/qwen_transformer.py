@@ -49,7 +49,21 @@ class QwenTransformer:
         """
         self.device = device
 
+    def reset_kv_cache(self):
+        self.kv_cache.clear()
+
     def forward(self, X, key_pad_mask=None):
+        pass
+
+    def forward_kv(self, x_new: torch.Tensor, start_pos: int):
+        # During training, forward handles the whole sequence and saves what backward needs.
+        # When generating, we keep the old keys and values so we only compute the new tokens.
+        # Same weights, just reusing work! The first call handles the whole prompt.
+        """
+        Cached forward for generation (prefill chunk or one decode token).
+        x_new shape: (1, T, C)
+        """
+
         pass
 
     def backward(self, dY):
@@ -96,16 +110,4 @@ class QwenTransformer:
 
         return block_state
 
-    def reset_kv_cache(self):
-        self.kv_cache.clear()
 
-    def forward_kv(self, x_new: torch.Tensor, start_pos: int):
-        # During training, forward handles the whole sequence and saves what backward needs.
-        # When generating, we keep the old keys and values so we only compute the new tokens.
-        # Same weights, just reusing work! The first call handles the whole prompt.
-        """
-        Cached forward for generation (prefill chunk or one decode token).
-        x_new shape: (1, T, C)
-        """
-
-        pass
